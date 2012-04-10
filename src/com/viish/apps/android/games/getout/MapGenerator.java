@@ -1,14 +1,33 @@
+/**
+   GetOut  
+   Copyright (C) 2012 Sylvain "Viish" Berfini
+
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.viish.apps.android.games.getout;
 
-
 import java.util.Random;
+
+import android.util.Log;
 //TODO :
 // Generate and use teleports & ennemies
-// Fix random shortcuts
+// Better maps
 public class MapGenerator 
 {
 	private static final int HOLE_PROBABILITY = 20;
-	private static final int MOVABLE_OBSTACLE_ON_THE_WAY_PROBABILITY = 30;
+	private static final int MOVABLE_OBSTACLE_ON_THE_WAY_PROBABILITY = 33;
 	private static final int MIN_LATITUDE = 2;
 	private static final int MAX_ITERATIONS = 50;
 	
@@ -149,39 +168,6 @@ public class MapGenerator
 			// We check the path is free, then we mark the path on the map
 			if (map[obstacleX][obstacleY] != EMPTY && map[obstacleX][obstacleY] != OBSTACLE)
 				continue;
-			
-			if (nextX == lastX)
-			{
-				boolean skipWhile = false;
-				for (int j = Math.min(lastY, nextY); j <= Math.max(lastY, nextY); j++) 
-				{
-					if (!isFreePath(it, map[nextX][j]))
-						skipWhile = true;
-				}
-				if (skipWhile)
-					continue;
-				
-				for (int j = Math.min(lastY, nextY); j <= Math.max(lastY, nextY); j++) 
-				{
-					if (map[nextX][j] == EMPTY)
-						map[nextX][j] = FREE_WAY;
-				}
-			} else {
-				boolean skipWhile = false;
-				for (int i = Math.min(lastX, nextX); i <= Math.max(lastX, nextX); i++)
-				{
-					if (!isFreePath(it, map[i][nextY]))
-						skipWhile = true;
-				}
-				if (skipWhile)
-					continue;
-				
-				for (int i = Math.min(lastX, nextX); i <= Math.max(lastX, nextX); i++)
-				{
-					if (map[i][nextY] == EMPTY)
-						map[i][nextY] = FREE_WAY;
-				}
-			}
 
 			if (movableObstacleOnTheWay && !isMovableObstacleOnTheMap && it != 0 && (r.nextBoolean() || it == nbMovements - 1))
 			{
@@ -202,7 +188,7 @@ public class MapGenerator
 					obstacleX += 1;
 					break;
 				}
-				
+
 				if (map[obstacleX][obstacleY] == EMPTY) {
 					obstacle = MOVABLE_OBSTACLE;
 					map[tempX][tempY] = OBSTACLE_TO_COME;
@@ -210,6 +196,43 @@ public class MapGenerator
 				} else {
 					obstacleX = tempX;
 					obstacleY = tempY;
+				}
+			}
+			
+			if (nextX == lastX)
+			{
+				boolean skipWhile = false;
+				for (int j = Math.min(lastY, nextY); j <= Math.max(lastY, nextY); j++) 
+				{
+					if (!isFreePath(it, map[nextX][j])) {
+						skipWhile = true;
+						break;
+					}
+				}
+				if (skipWhile)
+					continue;
+				
+				for (int j = Math.min(lastY, nextY); j <= Math.max(lastY, nextY); j++) 
+				{
+					if (map[nextX][j] == EMPTY)
+						map[nextX][j] = FREE_WAY;
+				}
+			} else {
+				boolean skipWhile = false;
+				for (int i = Math.min(lastX, nextX); i <= Math.max(lastX, nextX); i++)
+				{
+					if (!isFreePath(it, map[i][nextY])) {
+						skipWhile = true;
+						break;
+					}
+				}
+				if (skipWhile)
+					continue;
+				
+				for (int i = Math.min(lastX, nextX); i <= Math.max(lastX, nextX); i++)
+				{
+					if (map[i][nextY] == EMPTY)
+						map[i][nextY] = FREE_WAY;
 				}
 			}
 			
@@ -346,21 +369,17 @@ public class MapGenerator
 		EASY, MEDIUM, HARD;
 	}
 	
-	enum Direction {
-		NORTH, SOUTH, EAST, WEST;
-		
-		public static Direction randomDirection(Random r)
+	public void printMap(int[][]map)
+	{
+		for (int j = 0; j < SIZE; j++)
 		{
-			int d = r.nextInt(Direction.values().length);
-			return Direction.values()[d];
-		}
-		
-		public static boolean isOpposite(Direction d1, Direction d2)
-		{
-			return d1.equals(Direction.NORTH) && d2.equals(Direction.SOUTH) ||
-					d2.equals(Direction.NORTH) && d1.equals(Direction.SOUTH) ||
-					d1.equals(Direction.EAST) && d2.equals(Direction.WEST) ||
-					d2.equals(Direction.EAST) && d1.equals(Direction.WEST);
+			String row = "";
+			for (int i = 0; i < SIZE; i++)
+			{
+				row += " " + map[i][j] + " ";
+			}
+			System.out.println(row);
+			Log.e("GetOut", row);
 		}
 	}
 }
