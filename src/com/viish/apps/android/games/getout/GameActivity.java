@@ -32,4 +32,11 @@ public class GameActivity extends Activity
 
 		setContentView(R.layout.game);
 	}
+	
+	protected void onPause() {
+		super.onPause();
+		
+		GameView gView = (GameView) findViewById(R.id.gameView);
+		gView.pause();
+	}
 }

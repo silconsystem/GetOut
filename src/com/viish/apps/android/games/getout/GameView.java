@@ -39,6 +39,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback,
 
 	private PaintThread	thread;
 
+	public void pause()
+	{
+		thread.state = PaintThread.PAUSED;
+	}
+	
 	void initView()
 	{
 		SurfaceHolder holder = getHolder();

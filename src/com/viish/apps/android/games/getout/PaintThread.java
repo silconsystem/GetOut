@@ -30,8 +30,6 @@ import android.view.SurfaceHolder;
 public class PaintThread extends Thread
 {
 	private SurfaceHolder	mSurfaceHolder;
-	private Paint			mLinePaint;
-	private Paint			blackPaint;
 	GameEngine				gEngine;
 
 	private long			sleepTime;
@@ -46,11 +44,6 @@ public class PaintThread extends Thread
 	{
 
 		mSurfaceHolder = surfaceHolder;
-
-		mLinePaint = new Paint();
-		mLinePaint.setARGB(255, 0, 255, 0);
-		blackPaint = new Paint();
-		blackPaint.setARGB(255, 0, 0, 0);
 
 		gEngine = gEngineS;
 		state = RUNNING;
@@ -69,7 +62,6 @@ public class PaintThread extends Thread
 				c = mSurfaceHolder.lockCanvas(null);
 				synchronized (mSurfaceHolder)
 				{
-					c.drawRect(0, 0, c.getWidth(), c.getHeight(), blackPaint);
 					gEngine.draw(c);
 				}
 			}
